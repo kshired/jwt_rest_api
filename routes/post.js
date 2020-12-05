@@ -17,8 +17,6 @@ router.get('/posts', async (req, res) => {
     for (let {
       id,
       title,
-      content,
-      userId,
       user: { nick: nick },
     } of posts) {
       result.push({ id, title, nick });
@@ -32,6 +30,7 @@ router.post('/posts', authenticateJWT, async (req, res) => {
     console.log(req.user);
     const post = await Post.create({
       title: req.body.title,
+      category: req.body.category,
       content: req.body.content,
       userId: req.user.id,
     });
@@ -74,6 +73,7 @@ router.get('/posts/:id', async (req, res) => {
     return res.status(200).json({
       id: post.id,
       title: post.title,
+      category: post.category,
       content: post.content,
       nick: post.user.nick,
     });
