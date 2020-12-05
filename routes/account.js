@@ -40,7 +40,9 @@ router.post('/signup', async (req, res) => {
       email: 'is conflicted!',
     });
   }
-  const hash = await bcrypt.hash(password, 12);
+  const salt = await bcrypt.genSalt(12);
+  const hash = await bcrypt.hash(password, salt);
+
   User.create({
     email,
     nick,
