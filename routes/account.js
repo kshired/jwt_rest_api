@@ -3,7 +3,6 @@ import passport from 'passport';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { Router } from 'express';
-
 import { User, Post } from '../models';
 import { authenticateJWT } from '../passport';
 
@@ -40,6 +39,7 @@ router.post('/signup', async (req, res) => {
       email: 'is conflicted!',
     });
   }
+
   const salt = await bcrypt.genSalt(12);
   const hash = await bcrypt.hash(password, salt);
 

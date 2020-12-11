@@ -3,7 +3,7 @@ import { authenticateJWT } from '../passport';
 import { User, Post } from '../models';
 const router = Router();
 
-router.get('/posts', async (req, res) => {
+router.get('/posts', (req, res) => {
   Post.findAll({
     include: [
       {
@@ -40,24 +40,49 @@ router.post('/posts', authenticateJWT, async (req, res) => {
   }
 });
 
-// router.put('/post/:id', authenticateJWT, async (req, res) => {
-//   try {
-//     const post = await Post.findOne;
-//   }
-// });
+router.put('/post/:id', authenticateJWT, async (req, res) => {
+  let query = {};
+  if (req.body.title) query.title = req.body.title;
+  if (req.body.category) query.category = req.body.category;
+  if (req.body.content) query.contetnt = req.body.content;
 
-// router.delete('/post/:id', authenticateJWT, async (req, res) => {
-//   try {
-//     const post = await Post.findOne({
-//       where: { id: req.params.id, userId: req.user.id },
-//     });
-//     if (post) {
-//       Post.destroy({ where: { id: req.params.id } }).then(())
-//     } else{
+  const post = await Post.findOne({
+    where: { id: req.params.id, userId: req.user.id },
+  });
 
-//     }
-//   }
-// });
+  if (post) {
+    Post.update(query, { where: { id: req.params.id } })
+      .then(() => {
+        return res.status(200).send();
+      })
+      .catch((err) => {
+        console.error(err);
+        return res.status(500).send();
+      });
+  } else {
+    return res.status(500).json({ post: 'cannot find!' });
+  }
+});
+
+router.delete('/post/:id', authenticateJWT, async (req, res) => {
+  try {
+    const post = await Post.findOne({
+      where: { id: req.params.id, userId: req.user.id },
+    });
+    if (post) {
+      Post.destroy({ where: { id: req.params.id } })
+        .then(() => {
+          return res.status(200).send();
+        })
+        .catch((err) => {
+          console.error(err);
+          return res.status(500).send();
+        });
+    } else {
+      return res.status(500).send();
+    }
+  }
+});
 
 router.get('/posts/:id', async (req, res) => {
   try {

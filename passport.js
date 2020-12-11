@@ -28,10 +28,15 @@ const localVerify = async (email, password, done) => {
   }
 };
 
-const jwtOptions = {
+const accessJwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.SECRET,
+  secretOrKey: process.env.ACCESS_SECRET,
 };
+
+// const refreshJwtOptions = {
+//   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+//   secretOrKey: process.env.REFRESH_SECRET,
+// };
 
 const jwtVerify = async (payload, done) => {
   try {
@@ -52,7 +57,7 @@ const jwtVerify = async (payload, done) => {
 
 export default function passportConfig() {
   passport.use(new LocalStrategy(LocalStrategyOption, localVerify));
-  passport.use(new JwtStrategy(jwtOptions, jwtVerify));
+  passport.use(new JwtStrategy(jwtOptions, accessJwtOptions));
 }
 
 export function authenticateJWT(req, res, next) {
